@@ -21,7 +21,7 @@ class ProductFactory extends Factory
             'category_id'=>1,
             'name'=>fake()->sentence(2),
             'description'=>fake()->paragraph(5),
-            'img' => fake()->imageUrl(),
+            'img' => json_encode([fake()->imageUrl()]),
             'stock' => fake()->numberBetween(0,100),
             'price' => fake()->numberBetween(200, 1000),
 

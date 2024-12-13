@@ -19,28 +19,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-     User::factory(1)->create();
+     User::factory(1)->create([
+        'name'=>'admin',
+        'password'=>'admin',
+        'role'=>'admin',
+         'email'=>'admin@ecom.com'
+     ]);
+
+
+     User::factory(1)->create([
+        'name'=>'user',
+        'password'=>'user',
+        'role'=>'user',
+         'email'=>'user@ecom.com'
+     ]);
 
          Category::factory()->create([
             'name' => 'super',
 
         ]);
 
-        Product::factory(30)->create();
+    Product::factory(500)->create();
 
 
 
-        Order::factory()->create([
-            'user_id' => 1,
-            'order_number'=>"222345656"
+        // Order::factory()->create([
+        //     'user_id' => 1,
+        //     'order_number'=>"222345656"
 
-        ]);
+        // ]);
 
-        OrderItems::factory()->create([
-            'order_id' => 1,
-            'product_id' => 1,
+        // OrderItems::factory()->create([
+        //     'order_id' => 1,
+        //     'product_id' => 1,
 
-        ]);
+        // ]);
 
 
 

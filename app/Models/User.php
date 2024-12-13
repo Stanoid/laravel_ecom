@@ -63,6 +63,16 @@ class User extends Authenticatable
       return $this->hasMany(Post::class);
     }
 
+
+    public function hasRole($role)
+    {
+     if($this->role==$role){
+        return true;
+     }else{
+        return false;
+     }
+    }
+
     public function orders() : HasMany
     {
       return $this->hasMany(Order::class);

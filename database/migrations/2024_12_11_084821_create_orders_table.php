@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text('order_number');
-            $table->foreignId("user_id")->constrained();
+            $table->text('order_number')->default('-');
+            $table->text('address')->default('-');
+            $table->text('phone')->default('-');
+            $table->double('total_price')->default(0);
+            $table->enum('status', [ 'initiated', 'paid','delivered'])->default('initiated');
+            $table->foreignId("user_id") ->constrained();
 
         });
     }

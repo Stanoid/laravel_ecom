@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Request;
@@ -18,12 +19,35 @@ class ProductController extends Controller
 
     {
 
-        $products = Product::with(['category'])->orderBy('created_at','desc')->paginate(18);
 
-        return response()->json([
-            'data'=>$products,
 
-            ]);
+
+        if (Cache::has('products')) {
+
+           $cached_products= Cache::get('products');
+            return response()->json([
+                'data'=>$cached_products,
+
+                ],200);
+
+        }else{
+
+            $products = Product::with(['category'])->orderBy('created_at','desc')->paginate(30);
+
+            Cache::put('products', $products, 60);
+
+            return response()->json([
+                'data'=>$products,
+
+                ],200);
+
+
+        }
+
+
+
+
+
 
 
     }
@@ -39,38 +63,77 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $data= $request->validate([
-            'title'=>['required','max:255'],
-            'body'=>['required'],
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
 
-            ]);
+         if($request->validated()){
 
-      // $patho = Storage::disk('public')->put('imgs', $request->file('image'));
-        //    Auth::user()-> posts()->create(
-        //     [
-        //         'title' => $data['title'],
-        //         'body' => $data['body'],
-        //         'img' => $patho,
-        //     ]
-        //    );
+
+           // $patho = Storage::disk('public')->put('imgs', $request->file('image'));
 
 
 
-          // return back()->with('succ','Post created');
 
-          return "aaaa";
+
+         $paths = [];
+
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $patho = Storage::disk('public')->put('imgs', $image);
+
+                    array_push($paths,$patho);
+                // Do something with the image path, like storing it in a database
+            }
+        }
+
+
+
+                $product= Product::create(
+            [
+                'name' => $request->name,
+                'stock' => $request->stock,
+                'price' => $request->price,
+                'category_id'=>$request->category,
+                'description'=>$request->description,
+                'img'=>json_encode($paths)
+
+
+            ]
+           );
+
+           return response()->json([
+             'data'=>$product,
+
+              ],201);
+        }else{
+
+            //  return response()->json([
+            // 'error'=>$request->validated()
+            // ],201);////created
+
+       }
+
+
+
+
+
+
+
 
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+
+        $product = Product::with('category')->findOrFail($id);
+
+        return response()->json([
+            'data'=>$product,
+
+             ],200);
     }
 
     /**

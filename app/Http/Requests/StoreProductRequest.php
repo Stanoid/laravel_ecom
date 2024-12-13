@@ -11,7 +11,9 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+
+
+        return auth()->user()->hasRole('admin');
     }
 
     /**
@@ -22,7 +24,11 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'=> ['required','max:255'],
+            'price'=>['required','max:255'],
+            'stock'=> ['required','max:255'],
+            'category'=> ['required','max:255'],
+
         ];
     }
 }
