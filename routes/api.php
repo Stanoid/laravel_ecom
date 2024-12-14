@@ -4,6 +4,7 @@ use App\Http\Controllers\userController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 
 //un_authed
@@ -14,6 +15,7 @@ Route::get('user/login', [UserController::class, 'index'])->name("login");
 
 
 Route::get('products', [ProductController::class, 'index']);
+Route::get('categories', [CategoryController::class, 'index']);
 Route::get('product/{id}', [ProductController::class, 'show']);
 
 //Route::resource('products', ProductController::class);

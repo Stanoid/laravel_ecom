@@ -25,17 +25,16 @@ class ProductController extends Controller
 
 
 
-        $categories = Category::orderBy('created_at','desc')->paginate(10);
 
 
 
         if (Cache::has('products'.$request->query('cid').$request->query('page'))) {
 
+
+
            $cached_products= Cache::get('products'.$request->query('cid').$request->query('page'));
             return response()->json([
             'products'=> $cached_products,
-            'categories'=> $categories,
-
             'page_c'=>$request->query("page"),
             'cid_c'=>$request->query("cid"),
 
@@ -43,6 +42,9 @@ class ProductController extends Controller
             ],200);
 
         }else{
+
+            // $categories = Category::orderBy('created_at','desc')->paginate(10);
+
 
             if($request->query('cid')==0){
                 $products = Product::orderBy('created_at','desc')->paginate(10);
@@ -55,7 +57,6 @@ class ProductController extends Controller
 
             return response()->json([
                 'products'=> $products,
-                'categories'=> $categories,
                 'page_'=>$request->query("page"),
                 'cid'=>$request->query("cid"),
                         ],200);
