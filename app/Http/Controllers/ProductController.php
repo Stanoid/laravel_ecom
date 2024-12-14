@@ -9,46 +9,52 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Request;
+//use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index($cid)
+    public function index(Request $request)
 
     {
 
 
 
 
-        $categories = Category::orderBy('created_at','desc')->paginate(10);
-        if (Cache::has('products'.$cid)) {
 
-           $cached_products= Cache::get('products'.$cid);
+        $categories = Category::orderBy('created_at','desc')->paginate(10);
+        if (Cache::has('products'.$request->query('cid').$request->query('page'))) {
+
+           $cached_products= Cache::get('products'.$request->query('cid').$request->query('page'));
             return response()->json([
             'products'=> $cached_products,
             'categories'=> $categories,
-            'cat'=> $cid,
+            'page_c'=>$request->query("page"),
+            'cid_c'=>$request->query("cid"),
+
+
             ],200);
 
         }else{
 
-            if($cid==0){
+            if($request->query('cid')==0){
                 $products = Product::orderBy('created_at','desc')->paginate(10);
             }else{
-                $products = Product::where('category_id' ,$cid)->orderBy('created_at','desc')->paginate(10);
+                $products = Product::where('category_id' ,$request->query('cid'))->orderBy('created_at','desc')->paginate(10);
 
             }
 
-            Cache::put('products'.$cid, $products, 120);
+            Cache::put('products'.$request->query('cid').$request->query('page'), $products, 120);
 
             return response()->json([
                 'products'=> $products,
                 'categories'=> $categories,
-                'cat'=> $cid,
-                ],200);
+                'page_'=>$request->query("page"),
+                'cid'=>$request->query("cid"),
+                        ],200);
 
 
         }

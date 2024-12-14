@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 it('Gets the products', function () {
 
-    $response = $this->get('/api/products/0');
+    $response = $this->get('/api/products');
 
     $response->assertStatus(200);
 });
