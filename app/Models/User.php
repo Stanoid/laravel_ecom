@@ -27,6 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'address'
     ];
 
     /**
@@ -53,15 +55,8 @@ class User extends Authenticatable
     }
 
 
-    public function userData() : HasMany
-    {
-        return $this->hasMany(userData::class);
-    }
 
-    public function posts() : HasMany
-    {
-      return $this->hasMany(Post::class);
-    }
+
 
 
     public function hasRole($role)

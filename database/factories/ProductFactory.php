@@ -18,10 +18,10 @@ class ProductFactory extends Factory
     {
         return [
             //'user_id'=>1,
-            'category_id'=>1,
+            'category_id'=>fake()->numberBetween(1,9),
             'name'=>fake()->sentence(2),
             'description'=>fake()->paragraph(5),
-            'img' => json_encode([fake()->imageUrl()]),
+            'img' => json_encode(array(fake()->imageUrl())),
             'stock' => fake()->numberBetween(0,100),
             'price' => fake()->numberBetween(200, 1000),
 

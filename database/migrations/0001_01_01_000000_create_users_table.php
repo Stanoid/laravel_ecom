@@ -19,6 +19,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->text('address')->default('-');
+            $table->text('phone')->default('-');
             $table->enum('role', [ 'admin', 'user'])->default('user');
             $table->timestamps();
         });

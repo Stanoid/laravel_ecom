@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Container\Attributes\Auth;
@@ -15,30 +16,38 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($cid)
 
     {
 
 
 
 
-        if (Cache::has('products')) {
+        $categories = Category::orderBy('created_at','desc')->paginate(10);
+        if (Cache::has('products'.$cid)) {
 
-           $cached_products= Cache::get('products');
+           $cached_products= Cache::get('products'.$cid);
             return response()->json([
-                'data'=>$cached_products,
-
-                ],200);
+            'products'=> $cached_products,
+            'categories'=> $categories,
+            'cat'=> $cid,
+            ],200);
 
         }else{
 
-            $products = Product::with(['category'])->orderBy('created_at','desc')->paginate(30);
+            if($cid==0){
+                $products = Product::orderBy('created_at','desc')->paginate(10);
+            }else{
+                $products = Product::where('category_id' ,$cid)->orderBy('created_at','desc')->paginate(10);
 
-            Cache::put('products', $products, 60);
+            }
+
+            Cache::put('products'.$cid, $products, 120);
 
             return response()->json([
-                'data'=>$products,
-
+                'products'=> $products,
+                'categories'=> $categories,
+                'cat'=> $cid,
                 ],200);
 
 

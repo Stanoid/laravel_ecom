@@ -34,12 +34,9 @@ class DatabaseSeeder extends Seeder
          'email'=>'user@ecom.com'
      ]);
 
-         Category::factory()->create([
-            'name' => 'super',
+         Category::factory(10)->create([]);
 
-        ]);
-
-    Product::factory(500)->create();
+    Product::factory(20)->create();
 
 
 

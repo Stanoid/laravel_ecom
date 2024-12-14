@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class userController extends Controller
 {
@@ -30,6 +32,8 @@ class userController extends Controller
           $user=  User::create([
             'name'=> $request->name,
             'email'=> $request->email,
+            'address'=>$request->address,
+            'phone'=>$request->phone,
             'password'=>Hash::make($request->password) ,
             ]);
 
@@ -55,6 +59,40 @@ class userController extends Controller
             'token'=>$user->createToken('tkn')->plainTextToken
             ],200);
     }
+  }
+
+
+
+
+  public function update( UpdateUserRequest $request ){
+
+   Auth::user()->update([
+    'name'=>$request->name,
+    'address'=>$request->address,
+    'phone'=>$request->phone,
+
+   ]);
+
+   $user= Auth::user();
+
+
+
+        return response()->json([
+            'user'=>$user,
+            'token'=>$user->createToken('tkn')->plainTextToken
+            ],200);
+
+  }
+
+
+  public function me( Request $request ){
+
+    $user = Auth::user();
+
+        return response()->json([
+            'data'=>$user,
+            ],200);
+
   }
 
 
