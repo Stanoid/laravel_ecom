@@ -53,7 +53,7 @@ class ProductController extends Controller
 
             }
 
-            Cache::put('products'.$request->query('cid').$request->query('page'), $products, 120);
+            Cache::put('products'.$request->query('cid').$request->query('page'), $products, 30);
 
             return response()->json([
                 'products'=> $products,

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId("category_id")->constrained();
             $table->text('name');
             $table->longText('description');
-            $table->text('img');
+            $table->text('img')->default('["https:\/\/via.placeholder.com\/640x480.png\/003300?text=exercitationem","https:\/\/via.placeholder.com\/640x480.png\/0000cc?text=a","https:\/\/via.placeholder.com\/640x480.png\/00bbaa?text=non"]');
             $table->float('price');
             $table->integer('stock');
 

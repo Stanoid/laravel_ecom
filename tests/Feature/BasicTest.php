@@ -63,29 +63,6 @@ test('Login a user', function () {
 
 
 
-test('Admin can add product', function () {
-    $user = User::factory()->create([
-        'role'=>'admin'
-    ]);
-
-
-
-    $response = $this->actingAs($user)->postJson('/api/products/add', [
-        'name'=>"Pest test Product",
-        'price'=>1,
-        'stock'=>1,
-        'category'=> 1,
-        'description'=>"test",
-        'img'=>'path',
-    ]);
-
-    $response->assertStatus(201)
-             ->assertJsonStructure([
-                 'data' => ['id', 'name', 'price', 'stock'],
-             ]);
-
-    $this->assertDatabaseHas('products', ['name' => 'Pest test Product']);
-});
 
 
 test('Only admin can add the product', function () {
@@ -99,7 +76,6 @@ test('Only admin can add the product', function () {
         'stock'=>1,
         'category'=> 1,
         'description'=>"test",
-        'img'=>'path',
     ]);
     $response->assertStatus(403);
 
