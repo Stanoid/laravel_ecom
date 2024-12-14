@@ -26,12 +26,16 @@ class ProductController extends Controller
 
 
         $categories = Category::orderBy('created_at','desc')->paginate(10);
+
+
+
         if (Cache::has('products'.$request->query('cid').$request->query('page'))) {
 
            $cached_products= Cache::get('products'.$request->query('cid').$request->query('page'));
             return response()->json([
             'products'=> $cached_products,
             'categories'=> $categories,
+
             'page_c'=>$request->query("page"),
             'cid_c'=>$request->query("cid"),
 
