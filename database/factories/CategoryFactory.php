@@ -18,6 +18,8 @@ class CategoryFactory extends Factory
     {
         return [
             'name'=>fake()->realTextBetween(4,10),
+            'img' => json_encode(array(fake()->imageUrl())),
+
         ];
     }
 }
