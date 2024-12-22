@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
-use App\Http\Requests\StoreBrandRequest;
-use App\Http\Requests\UpdateBrandRequest;
-use Illuminate\Http\Request;
+use App\Models\city;
+use App\Http\Requests\StorecityRequest;
+use App\Http\Requests\UpdatecityRequest;
 
-class BrandController extends Controller
+class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,19 +27,15 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBrandRequest $request)
+    public function store(StorecityRequest $request)
     {
-        $Brand = new Brand();
-        $Brand->name = $request->input('name');
-        $Brand->save();
-
-        return response()->json(['message' => 'Brand created successfully', 'Brand' => $Brand], 201);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Brand $Brand)
+    public function show(city $city)
     {
         //
     }
@@ -48,7 +43,7 @@ class BrandController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Brand $Brand)
+    public function edit(city $city)
     {
         //
     }
@@ -56,7 +51,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBrandRequest $request, Brand $Brand)
+    public function update(UpdatecityRequest $request, city $city)
     {
         //
     }
@@ -64,7 +59,7 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Brand $Brand)
+    public function destroy(city $city)
     {
         //
     }

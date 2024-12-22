@@ -3,6 +3,8 @@
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -100,12 +102,20 @@ test('Can place order', function () {
 
     $items = array($Item);
 
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->image('payment.jpg');
 
 
     $response = $this->actingAs($user)->postJson('/api/order/place', [
+        'img'=> $file,
+        "city_id"=>1,
         "cart"=> $items,
         "phone"=>"090909",
-        "address"=>"test adress"
+        "paymentphone"=> "090909090",
+        'fullName'=>"test full name",
+        "address"=>"test adress",
+
     ]);
 
     $response->assertStatus(200)
@@ -113,7 +123,24 @@ test('Can place order', function () {
                  'data' => ['id', 'order_number', 'phone'],
              ]);
 
+            // Storage::disk('public')->assertExists($user->avatar);
+
     $this->assertDatabaseHas('orders', ['address' => 'test adress ']);
+});
+
+
+
+
+test('admin can list orders', function () {
+    $user = User::factory()->create([
+        'role'=>'admin'
+    ]);
+
+    $response = $this->actingAs($user)->get('/api/orders/list');
+    $response->assertStatus(200);
+
+
+
 });
 
 

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
-use App\Http\Requests\StoreBrandRequest;
-use App\Http\Requests\UpdateBrandRequest;
-use Illuminate\Http\Request;
+use App\Models\Payment;
+use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\UpdatePaymentRequest;
 
-class BrandController extends Controller
+class PaymentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,19 +27,15 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBrandRequest $request)
+    public function store(StorePaymentRequest $request)
     {
-        $Brand = new Brand();
-        $Brand->name = $request->input('name');
-        $Brand->save();
-
-        return response()->json(['message' => 'Brand created successfully', 'Brand' => $Brand], 201);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Brand $Brand)
+    public function show(Payment $payment)
     {
         //
     }
@@ -48,7 +43,7 @@ class BrandController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Brand $Brand)
+    public function edit(Payment $payment)
     {
         //
     }
@@ -56,7 +51,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBrandRequest $request, Brand $Brand)
+    public function update(UpdatePaymentRequest $request, Payment $payment)
     {
         //
     }
@@ -64,7 +59,7 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Brand $Brand)
+    public function destroy(Payment $payment)
     {
         //
     }

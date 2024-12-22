@@ -13,11 +13,11 @@ class recipe extends Model
 
 
     protected $fillable = [
-
+        "name",
         'description ',
         'serving',
         'img',
-        'time',
+        'timeInMinutes',
         'instructions',
 
 

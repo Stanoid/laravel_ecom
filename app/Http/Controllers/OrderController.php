@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\city;
+use App\Models\Payment;
 use App\Models\Product;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
@@ -16,12 +21,43 @@ class OrderController extends Controller
     {
 
 
-            $orders = Order::where('user_id', Auth::user()->id)->with(['user','items','items.product','items.product.category'])->orderBy('created_at','desc')->paginate(6);
+            $orders = Order::where('user_id', Auth::user()->id)->with(['items','items.product','items.product.category','payment'])->orderBy('created_at','desc')->paginate(6);
 
             return response()->json([
                 'data'=>$orders,
                // 'token'=>$user->createToken('tkn')->plainTextToken
                 ]);
+
+
+    }
+
+
+    public function adminOrders()
+    {
+
+        if(Auth::user()->role=='admin'){
+            $orders = Order::orderBy('created_at','desc')->
+            with(['user','city','items','items.product','payment','items.product.category'])->
+            paginate(10);
+
+             return response()->json([
+                'data'=>$orders,
+
+                ],200);
+
+        }else{
+            return response()->json([
+                'message'=>"unauthorised",
+
+                ],401);
+        }
+
+          //  $orders = Order::where('user_id', Auth::user()->id)->with(['user','items','items.product','items.product.category'])->orderBy('created_at','desc')->paginate(6);
+
+            // return response()->json([
+            //     'data'=>$orders,
+            //    // 'token'=>$user->createToken('tkn')->plainTextToken
+            //     ]);
 
 
     }
@@ -47,6 +83,13 @@ class OrderController extends Controller
 
 
 
+        $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+
+      $payment =   Payment::create([
+            'fullname'=> $request->fullName,
+            'phone'=> $request->paymentphone,
+            'img'=> $patho,
+        ]);
 
 
         $order =  Auth::user()-> orders()->create(
@@ -54,6 +97,8 @@ class OrderController extends Controller
                 'order_number' => $ordernum,
                 'address'=> $request->address,
                 'phone'=> $request->phone,
+                'city_id'=> $request->city_id,
+                'payment_id'=> $payment->id,
             ]
            );
 
@@ -76,10 +121,7 @@ class OrderController extends Controller
 
                 $price= $product->price;
                 $qty = $obj->qty;
-                $total_price += $total_price + $price*$qty;
-
-
-
+                $total_price += $price*$qty;
 
                 $old_stock = $product->getOriginal('stock');
                 $product->update(['stock' => $old_stock-$qty]);
@@ -100,7 +142,11 @@ class OrderController extends Controller
 
 
 
+        $delivery_price = city::find($request->city_id)->price;
+        $total_price += $delivery_price;
+
         $Ord = Order::find($order->id);
+
         $Ord->update(['total_price' => $total_price,'status'=>'paid']);
 
 

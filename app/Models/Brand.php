@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Product;
 
 
-class brand extends Model
+class Brand extends Model
 {
     /** @use HasFactory<\Database\Factories\BrandFactory> */
     use HasFactory;

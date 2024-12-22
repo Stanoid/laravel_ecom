@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\city;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Recipe;
@@ -39,8 +40,10 @@ class DatabaseSeeder extends Seeder
          Category::factory(10)->create([]);
          Brand::factory(3)->create([]);
 
-    Product::factory(1000)->create();
-    Recipe::factory(1000)->create();
+    Product::factory(100)->create();
+    city::factory(20)->create();
+
+    Recipe::factory(100)->create();
 
 
 
