@@ -58,15 +58,6 @@ test('Login a user', function () {
 
 
 
-
-
-
-
-
-
-
-
-
 test('Only admin can add the product', function () {
     $user = User::factory()->create([
         'role'=>'user'
@@ -113,6 +104,7 @@ test('Can place order', function () {
         "cart"=> $items,
         "phone"=>"090909",
         "paymentphone"=> "090909090",
+        "status"=> "3|zLiu8uahCLsEWXtMMl05pfXAB2B8yOetNh5zrZhfd7e778e8",
         'fullName'=>"test full name",
         "address"=>"test adress",
 

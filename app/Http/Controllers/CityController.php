@@ -13,7 +13,12 @@ class CityController extends Controller
      */
     public function index()
     {
-        //
+        $cities = city::all();
+
+        return response()->json([
+            'data'=>$cities,
+
+            ],200);
     }
 
     /**
@@ -29,7 +34,12 @@ class CityController extends Controller
      */
     public function store(StorecityRequest $request)
     {
-        //
+        $City = new city();
+        $City->name = $request->input('name');
+        $City->price = $request->input('price');
+        $City->save();
+
+        return response()->json(['message' => 'Brand created successfully', 'City' => $City], 201);
     }
 
     /**

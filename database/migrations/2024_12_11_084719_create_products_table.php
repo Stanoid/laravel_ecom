@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('origin_country');
             $table->integer("discount");
             $table->date("expiration_date");
-
             $table->text("size");
             $table->longText('description');
             $table->text('img')->default('["https:\/\/via.placeholder.com\/640x480.png\/003300?text=exercitationem","https:\/\/via.placeholder.com\/640x480.png\/0000cc?text=a","https:\/\/via.placeholder.com\/640x480.png\/00bbaa?text=non"]');

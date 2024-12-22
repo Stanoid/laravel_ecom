@@ -14,7 +14,13 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
+        $brands = Brand::all();
+
+        return response()->json([
+            'data'=>$brands,
+
+            ],200);
+
     }
 
     /**
@@ -28,8 +34,10 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBrandRequest $request)
+    public function store(Request $request)
     {
+
+       // dd($request->input('name'));
         $Brand = new Brand();
         $Brand->name = $request->input('name');
         $Brand->save();

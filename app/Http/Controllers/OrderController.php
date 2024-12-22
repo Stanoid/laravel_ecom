@@ -187,6 +187,23 @@ class OrderController extends Controller
         //
     }
 
+
+    public function paid($id)
+    {
+        $order = Order::find($id);
+        $order->update(['status' => "paid"]);
+
+        return response()->json([
+            'message'=>  "order paid",
+            'data'=>  $order,
+
+            ],200);
+
+
+
+
+    }
+
     /**
      * Update the specified resource in storage.
      */
