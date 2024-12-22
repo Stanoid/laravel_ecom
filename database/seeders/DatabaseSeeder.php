@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\Recipe;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -35,8 +37,10 @@ class DatabaseSeeder extends Seeder
      ]);
 
          Category::factory(10)->create([]);
+         Brand::factory(3)->create([]);
 
-    Product::factory(100)->create();
+    Product::factory(1000)->create();
+    Recipe::factory(1000)->create();
 
 
 

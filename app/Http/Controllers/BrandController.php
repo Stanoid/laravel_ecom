@@ -2,24 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\brand;
+use App\Http\Requests\StorebrandRequest;
+use App\Http\Requests\UpdatebrandRequest;
+use Illuminate\Http\Request;
 
-
-class CategoryController extends Controller
+class BrandController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at','desc')->paginate(10);
-
-        return response()->json([
-            'data'=> $categories
-                    ],200);
-
+        //
     }
 
     /**
@@ -33,15 +28,19 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StorebrandRequest $request)
     {
-        //
+        $brand = new brand();
+        $brand->name = $request->input('name');
+        $brand->save();
+
+        return response()->json(['message' => 'Brand created successfully', 'brand' => $brand], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(brand $brand)
     {
         //
     }
@@ -49,7 +48,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(brand $brand)
     {
         //
     }
@@ -57,7 +56,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdatebrandRequest $request, brand $brand)
     {
         //
     }
@@ -65,7 +64,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(brand $brand)
     {
         //
     }

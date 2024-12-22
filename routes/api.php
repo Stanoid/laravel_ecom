@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\BrandController;
 
 //un_authed
 Route::post('user/register',[userController::class,'store']);
@@ -13,7 +14,7 @@ Route::post('user/login', [UserController::class, 'auth']);
 
 Route::get('user/login', [UserController::class, 'index'])->name("login");
 
-
+Route::get('test', [ProductController::class, 'test']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('product/{id}', [ProductController::class, 'show']);
@@ -41,4 +42,5 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::post('products/add', [ProductController::class, 'store']);
     Route::post('user/logout', [UserController::class, 'logout']);
+    Route::post('brand/create', [BrandController::class, 'store']);
 });

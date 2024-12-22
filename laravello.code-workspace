@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../front_ecom"
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#f47e6f",
+			"activityBar.background": "#f47e6f",
+			"activityBar.foreground": "#15202b",
+			"activityBar.inactiveForeground": "#15202b99",
+			"activityBarBadge.background": "#a6f8af",
+			"activityBarBadge.foreground": "#15202b",
+			"commandCenter.border": "#e7e7e799",
+			"sash.hoverBorder": "#f47e6f",
+			"statusBar.background": "#f05340",
+			"statusBar.foreground": "#e7e7e7",
+			"statusBarItem.hoverBackground": "#f47e6f",
+			"statusBarItem.remoteBackground": "#f05340",
+			"statusBarItem.remoteForeground": "#e7e7e7",
+			"titleBar.activeBackground": "#f05340",
+			"titleBar.activeForeground": "#e7e7e7",
+			"titleBar.inactiveBackground": "#f0534099",
+			"titleBar.inactiveForeground": "#e7e7e799"
+		}
+	}
+}
