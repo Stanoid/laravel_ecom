@@ -4,10 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\city;
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\Recipe;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -34,11 +37,12 @@ class DatabaseSeeder extends Seeder
          'email'=>'user@ecom.com'
      ]);
 
-         Category::factory(10)->create([
-            
-         ]);
+         Category::factory(10)->create([]);
 
     Product::factory(100)->create();
+    city::factory(20)->create();
+
+    Recipe::factory(100)->create();
 
 
 

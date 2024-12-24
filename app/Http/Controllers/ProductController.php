@@ -17,59 +17,51 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
     public function index(Request $request)
 
     {
-
-
-
-
-
-
-
-
-        if (Cache::has('products'.$request->query('cid').$request->query('page'))) {
-
-
-
-           $cached_products= Cache::get('products'.$request->query('cid').$request->query('page'));
+        if (Cache::has('products' . $request->query('cid') . $request->query('page'))) {
+            $cached_products = Cache::get('products' . $request->query('cid') . $request->query('page'));
             return response()->json([
-            'products'=> $cached_products,
-            'page_c'=>$request->query("page"),
-            'cid_c'=>$request->query("cid"),
-
-
-            ],200);
-
-        }else{
-
+                'products' => $cached_products,
+            ], 200);
+        } else {
             // $categories = Category::orderBy('created_at','desc')->paginate(10);
-
-
-            if($request->query('cid')==0){
-                $products = Product::orderBy('created_at','desc')->paginate(10);
-            }else{
-                $products = Product::where('category_id' ,$request->query('cid'))->orderBy('created_at','desc')->paginate(10);
-
+            if ($request->query('cid') == 0) {
+                $products = Product::with(['brand', 'category'])->select(
+                    [
+                        'img',
+                        'price',
+                        'stock',
+                        'category_id',
+                        "name",
+                        "brand_id",
+                        "id"
+                    ]
+                )->orderBy('created_at', 'desc')->paginate(10);
+            } else {
+                $products = Product::with(['brand', 'category'])->select(
+                    [
+                        'img',
+                        'price',
+                        'stock',
+                        'category_id',
+                        "name",
+                        "brand_id",
+                        "id"
+                    ]
+                )->where('category_id', $request->
+                query('cid'))->orderBy('created_at', 'desc')->
+                paginate(10);
             }
-
-            Cache::put('products'.$request->query('cid').$request->query('page'), $products, 30);
-
+            Cache::put('products' . $request->query('cid') . $request->
+            query('page'), $products, 30);
             return response()->json([
-                'products'=> $products,
-                'page_'=>$request->query("page"),
-                'cid'=>$request->query("cid"),
-                        ],200);
-
-
+                'products' => $products,
+            ], 200);
         }
-
-
-
-
-
-
-
     }
 
     /**
@@ -86,60 +78,53 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
 
-         if($request->validated()){
+        if ($request->validated()) {
 
 
-           // $patho = Storage::disk('public')->put('imgs', $request->file('image'));
+            // $patho = Storage::disk('public')->put('imgs', $request->file('image'));
 
 
 
 
 
-         $paths = [];
+            $paths = [];
 
-        if ($request->hasFile('image')) {
-            foreach ($request->file('image') as $image) {
-                $patho = Storage::disk('public')->put('imgs', $image);
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $image) {
+                    $patho = Storage::disk('public')->put('imgs', $image);
 
-                    array_push($paths,$patho);
-                // Do something with the image path, like storing it in a database
+                    array_push($paths, $patho);
+                    // Do something with the image path, like storing it in a database
+                }
             }
-        }
 
 
 
-                $product= Product::create(
-            [
-                'name' => $request->name,
-                'stock' => $request->stock,
-                'price' => $request->price,
-                'category_id'=>$request->category,
-                'description'=>$request->description,
-                'img'=>json_encode($paths)
+            $product = Product::create(
+                [
+                    'name' => $request->name,
+                    'brand_id' => $request->brand_id,
+                    'stock' => $request->stock,
+                    'price' => $request->price,
+                    'category_id' => $request->category,
+                    'description' => $request->description,
+                    'img' => json_encode($paths)
 
 
-            ]
-           );
+                ]
+            );
 
-           return response()->json([
-             'data'=>$product,
+            return response()->json([
+                'data' => $product,
 
-              ],201);
-        }else{
+            ], 201);
+        } else {
 
             //  return response()->json([
             // 'error'=>$request->validated()
             // ],201);////created
 
-       }
-
-
-
-
-
-
-
-
+        }
     }
 
     /**
@@ -148,12 +133,12 @@ class ProductController extends Controller
     public function show($id)
     {
 
-        $product = Product::with('category')->findOrFail($id);
+        $product = Product::with(['brand', 'category', 'recipes'])->findOrFail($id);
 
         return response()->json([
-            'data'=>$product,
+            'data' => $product,
 
-             ],200);
+        ], 200);
     }
 
     /**
@@ -178,5 +163,24 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    public function test(Request $request)
+    {
+        $products = Product::with(['brand', 'category'])->select(
+            [
+                'img',
+                'price',
+                'stock',
+                'category_id',
+                "name",
+                "brand_id",
+                "id"
+            ]
+        )->orderBy('created_at', 'desc')->
+        simplePaginate(10);
+
+
+        return $products;
     }
 }

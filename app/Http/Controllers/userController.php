@@ -16,7 +16,6 @@ class userController extends Controller
     public function index(Request $request){
 
 
-
             return response()->json([
                 'error'=>"unauthorized TODO: return error code ",
                 //'token'=>$user->createToken('tkn')->plainTextToken

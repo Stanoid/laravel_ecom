@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\city;
+use App\Http\Requests\StorecityRequest;
+use App\Http\Requests\UpdatecityRequest;
 
-
-class CategoryController extends Controller
+class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at','desc')->paginate(10);
+        $cities = city::all();
 
         return response()->json([
-            'data'=> $categories
-                    ],200);
+            'data'=>$cities,
 
+            ],200);
     }
 
     /**
@@ -33,15 +32,20 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StorecityRequest $request)
     {
-        //
+        $City = new city();
+        $City->name = $request->input('name');
+        $City->price = $request->input('price');
+        $City->save();
+
+        return response()->json(['message' => 'Brand created successfully', 'City' => $City], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(city $city)
     {
         //
     }
@@ -49,7 +53,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(city $city)
     {
         //
     }
@@ -57,7 +61,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdatecityRequest $request, city $city)
     {
         //
     }
@@ -65,7 +69,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(city $city)
     {
         //
     }

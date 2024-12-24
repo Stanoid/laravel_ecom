@@ -20,6 +20,9 @@ return new class extends Migration
             $table->double('total_price')->default(0);
             $table->enum('status', [ 'initiated', 'paid','delivered'])->default('initiated');
             $table->foreignId("user_id") ->constrained();
+            $table->foreignId("payment_id") ->constrained();
+            $table->foreignId("city_id") ->constrained();
+
 
         });
     }
