@@ -37,7 +37,14 @@ class DatabaseSeeder extends Seeder
          'email'=>'user@ecom.com'
      ]);
 
-         Category::factory(10)->create([]);
+
+         Category::factory(10)->create([
+
+         ]);
+
+         Category::factory(30)->create([]);
+         Brand::factory(3)->create([]);
+
 
     Product::factory(100)->create();
     city::factory(20)->create();
