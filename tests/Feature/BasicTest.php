@@ -77,6 +77,56 @@ test('Only admin can add the product', function () {
 });
 
 
+
+test(' admin Can add product', function () {
+    $user = User::factory()->create([
+        'role'=>'admin'
+    ]);
+
+
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->image('payment.jpg');
+
+
+    $response = $this->actingAs($user)->postJson('/api/products/add', [
+
+
+        'name'=>"test",
+        'price'=>1,
+        'fact_id'=>1,
+        'origin_country'=>'test',
+        'discount'=>1,
+        'size'=>'test',
+
+        'expiration_date'=>'2021-12-12',
+        'stock'=>100,
+        'category'=>1,
+        'brand_id'=>1,
+        'description'=>"test",
+        'img'=> $file,
+
+
+
+
+
+    ]);
+
+    $response->assertStatus(201)
+             ->assertJsonStructure([
+                 'data' => ['id', 'name', 'stock'],
+             ]);
+
+            // Storage::disk('public')->assertExists($user->avatar);
+
+    $this->assertDatabaseHas('products', ['name' => 'test']);
+});
+
+
+
+
+
+
 test('Can place order', function () {
     $user = User::factory()->create([
         'role'=>'user'

@@ -10,8 +10,9 @@ use App\Models\Payment;
 use App\Models\Product;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+
 class OrderController extends Controller
 {
     /**
@@ -21,43 +22,38 @@ class OrderController extends Controller
     {
 
 
-            $orders = Order::where('user_id', Auth::user()->id)->with(['items','items.product','items.product.category','payment'])->orderBy('created_at','desc')->paginate(6);
+        $orders = Order::where('user_id', Auth::user()->id)->with(['items', 'items.product', 'items.product.category', 'payment'])->orderBy('created_at', 'desc')->paginate(6);
 
-            return response()->json([
-                'data'=>$orders,
-               // 'token'=>$user->createToken('tkn')->plainTextToken
-                ]);
-
-
+        return response()->json([
+            'data' => $orders,
+            // 'token'=>$user->createToken('tkn')->plainTextToken
+        ]);
     }
 
 
     public function adminOrders()
     {
 
-        if(Auth::user()->role=='admin'){
-            $orders = Order::orderBy('created_at','desc')->
-            with(['user','city','items','items.product','payment','items.product.category'])->
-            paginate(10);
+        if (Auth::user()->role == 'admin') {
+            $orders = Order::orderBy('created_at', 'desc')->with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])->paginate(10);
 
-             return response()->json([
-                'data'=>$orders,
-
-                ],200);
-
-        }else{
             return response()->json([
-                'message'=>"unauthorised",
+                'data' => $orders,
 
-                ],401);
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => "unauthorised",
+
+            ], 401);
         }
 
-          //  $orders = Order::where('user_id', Auth::user()->id)->with(['user','items','items.product','items.product.category'])->orderBy('created_at','desc')->paginate(6);
+        //  $orders = Order::where('user_id', Auth::user()->id)->with(['user','items','items.product','items.product.category'])->orderBy('created_at','desc')->paginate(6);
 
-            // return response()->json([
-            //     'data'=>$orders,
-            //    // 'token'=>$user->createToken('tkn')->plainTextToken
-            //     ]);
+        // return response()->json([
+        //     'data'=>$orders,
+        //    // 'token'=>$user->createToken('tkn')->plainTextToken
+        //     ]);
 
 
     }
@@ -85,22 +81,22 @@ class OrderController extends Controller
 
         $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
-      $payment =   Payment::create([
-            'fullname'=> $request->fullName,
-            'phone'=> $request->paymentphone,
-            'img'=> $patho,
+        $payment =   Payment::create([
+            'fullname' => $request->fullName,
+            'phone' => $request->paymentphone,
+            'img' => $patho,
         ]);
 
 
-        $order =  Auth::user()-> orders()->create(
+        $order =  Auth::user()->orders()->create(
             [
                 'order_number' => $ordernum,
-                'address'=> $request->address,
-                'phone'=> $request->phone,
-                'city_id'=> $request->city_id,
-                'payment_id'=> $payment->id,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'city_id' => $request->city_id,
+                'payment_id' => $payment->id,
             ]
-           );
+        );
 
 
         foreach ($request->cart as $cartItem) {
@@ -110,31 +106,30 @@ class OrderController extends Controller
 
 
 
-            if($product->stock<=0){
+            if ($product->stock <= 0) {
                 return response()->json([
-                    'message'=> $product->name . "is out of stock",
-                    "error_code"=> "out_of_stock"
-                    ],200);
-            }else{
+                    'message' => $product->name . "is out of stock",
+                    "error_code" => "out_of_stock"
+                ], 200);
+            } else {
 
 
 
-                $price= $product->price;
+                $price = $product->price;
                 $qty = $obj->qty;
-                $total_price += $price*$qty;
+                $total_price += $price * $qty;
 
-                $old_stock = $product->getOriginal('stock');
-                $product->update(['stock' => $old_stock-$qty]);
 
-               $orderitem = $order->items()->create(
+
+                $orderitem = $order->items()->create(
                     [
                         'product_id' => $id,
-                        'qty'=>$qty,
-                        'price'=>$price,
+                        'qty' => $qty,
+                        'price' => $price,
                     ]
-                   );
+                );
 
-             //  array_push($orderItems, $orderitem);
+                //  array_push($orderItems, $orderitem);
 
 
             };
@@ -147,13 +142,13 @@ class OrderController extends Controller
 
         $Ord = Order::find($order->id);
 
-        $Ord->update(['total_price' => $total_price,'status'=>'paid']);
+        $Ord->update(['total_price' => $total_price, 'status' => 'paid']);
 
 
         return response()->json([
-            'data'=>$Ord,
+            'data' => $Ord,
 
-            ],200);
+        ], 200);
     }
 
     /**
@@ -163,20 +158,18 @@ class OrderController extends Controller
 
     {
 
-        $order = Order::with(['user','items','items.product'])->findOrFail($id);
-        if($order->user->id ==Auth::user()->id){
+        $order = Order::with(['user', 'items', 'items.product'])->findOrFail($id);
+        if ($order->user->id == Auth::user()->id) {
             return response()->json([
-                'data'=>  $order,
+                'data' =>  $order,
 
-                ],200);
-        }else{
+            ], 200);
+        } else {
             return response()->json([
-                'data'=>  "unauthorised",
-                "error_code"=> "out_of_stock"
-                ],401);
+                'data' =>  "unauthorised",
+                "error_code" => "out_of_stock"
+            ], 401);
         };
-
-
     }
 
     /**
@@ -190,18 +183,38 @@ class OrderController extends Controller
 
     public function paid($id)
     {
-        $order = Order::find($id);
+
+        try {
+            $order = Order::with('items', 'items.product')->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
         $order->update(['status' => "paid"]);
 
+
+        foreach ($order->items as $item) {
+
+            try {
+                $product = Product::findOrFail($item->product_id);
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'error' =>  $e->getMessage(),
+                ], 404);
+            }
+
+            $product->update(['stock' => $product->stock - $item->qty]);
+        }
+
+
         return response()->json([
-            'message'=>  "order paid",
-            'data'=>  $order,
+            'message' =>  "order paid",
+            'data' =>  $order,
 
-            ],200);
-
-
-
-
+        ], 200);
     }
 
     /**
