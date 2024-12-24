@@ -17,6 +17,7 @@ return new class extends Migration
 
             $table->foreignId("category_id")->constrained();
             $table->foreignId("brand_id")->constrained();
+            $table->foreignId("fact_id")->constrained();
             $table->text('name');
             $table->text('origin_country');
             $table->integer("discount");

@@ -105,6 +105,12 @@ class ProductController extends Controller
                     'name' => $request->name,
                     'brand_id' => $request->brand_id,
                     'stock' => $request->stock,
+                    'fact_id' => $request->fact_id,
+
+                    'origin_country' => $request->origin_country,
+                    'discount' => $request->discount,
+                    'size' => $request->size,
+                    'expiration_date' => $request->expiration_date,
                     'price' => $request->price,
                     'category_id' => $request->category,
                     'description' => $request->description,
@@ -133,7 +139,7 @@ class ProductController extends Controller
     public function show($id)
     {
 
-        $product = Product::with(['brand', 'category', 'recipes'])->findOrFail($id);
+        $product = Product::with(['brand', 'category', 'recipes','fact'])->findOrFail($id);
 
         return response()->json([
             'data' => $product,

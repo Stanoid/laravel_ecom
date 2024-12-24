@@ -58,6 +58,12 @@ class CityController extends Controller
         //
     }
 
+
+    public function paid($id)
+    {
+        
+    }
+
     /**
      * Update the specified resource in storage.
      */
