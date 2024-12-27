@@ -54,6 +54,15 @@ class CategoryController extends Controller
         //
     }
 
+    public function list(Category $category)
+    {
+        $categories = Category::select(['id','name'])->orderBy('created_at','desc')->get();
+
+        return response()->json([
+            'data'=> $categories
+                    ],200);
+    }
+
     /**
      * Update the specified resource in storage.
      */
