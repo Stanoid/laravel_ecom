@@ -72,6 +72,9 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
 
+        //dd($request);
+
+
         $orderItems = [];
         $ordernum = uniqid();
         $user_id = Auth::user()->id;
@@ -142,7 +145,7 @@ class OrderController extends Controller
 
         $Ord = Order::find($order->id);
 
-        $Ord->update(['total_price' => $total_price, 'status' => 'paid']);
+        $Ord->update(['total_price' => $total_price, 'status' => 'initiated']);
 
 
         return response()->json([
@@ -212,6 +215,32 @@ class OrderController extends Controller
 
         return response()->json([
             'message' =>  "order paid",
+            'data' =>  $order,
+
+        ], 200);
+    }
+
+
+    public function delivered($id)
+    {
+
+
+
+
+        try {
+            $order = Order::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
+        $order->update(['status' => "delivered"]);
+
+
+        return response()->json([
+            'message' =>  "order delivered",
             'data' =>  $order,
 
         ], 200);

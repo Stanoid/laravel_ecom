@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Container\Attributes\Auth;
 //use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProductController extends Controller
 {
@@ -22,46 +23,97 @@ class ProductController extends Controller
     public function index(Request $request)
 
     {
-        if (Cache::has('products' . $request->query('cid') . $request->query('page'))) {
-            $cached_products = Cache::get('products' . $request->query('cid') . $request->query('page'));
-            return response()->json([
-                'products' => $cached_products,
-            ], 200);
+
+        if ($request->query('cid') == 0) {
+
+
+            $products = Cache::remember('products'.$request->query('cid').$request->query('page')
+, 60, function () {
+                return    Product::with(['brand', 'category'])->select(
+                    [
+                        'img',
+                        'price',
+                        'stock',
+                        'category_id',
+                        "name",
+                        "brand_id",
+                        "id"
+                    ]
+                )->simplePaginate(10);
+            });
         } else {
-            // $categories = Category::orderBy('created_at','desc')->paginate(10);
-            if ($request->query('cid') == 0) {
-                $products = Product::with(['brand', 'category'])->select(
-                    [
-                        'img',
-                        'price',
-                        'stock',
-                        'category_id',
-                        "name",
-                        "brand_id",
-                        "id"
-                    ]
-                )->orderBy('created_at', 'desc')->paginate(10);
-            } else {
-                $products = Product::with(['brand', 'category'])->select(
-                    [
-                        'img',
-                        'price',
-                        'stock',
-                        'category_id',
-                        "name",
-                        "brand_id",
-                        "id"
-                    ]
-                )->where('category_id', $request->
-                query('cid'))->orderBy('created_at', 'desc')->
-                paginate(10);
-            }
-            Cache::put('products' . $request->query('cid') . $request->
-            query('page'), $products, 30);
-            return response()->json([
-                'products' => $products,
-            ], 200);
+            $products = Cache::remember('products'.$request->query('cid').$request->query('page')
+, 60, function (Request $request) {
+                return    Product::with(['brand', 'category'])->select(
+                [
+                    'img',
+                    'price',
+                    'stock',
+                    'category_id',
+                    "name",
+                    "brand_id",
+                    "id"
+                ]
+            )->where('category_id', $request->
+            query('cid'))->simplePaginate(10);
+            });
         }
+
+        return response()->json([
+                  'products' => $products,
+                  ], 200);
+
+
+
+
+
+
+
+        // if (Cache::has('products' . $request->query('cid') . $request->query('page'))) {
+        //     $cached_products = Cache::get('products' . $request->query('cid') . $request->query('page'));
+        //     return response()->json([
+        //         'products' => $cached_products,
+        //     ], 200);
+        // } else {
+        //     // $categories = Category::orderBy('created_at','desc')->paginate(10);
+        //     if ($request->query('cid') == 0) {
+        //         $products = Product::with(['brand', 'category'])->select(
+        //             [
+        //                 'img',
+        //                 'price',
+        //                 'stock',
+        //                 'category_id',
+        //                 "name",
+        //                 "brand_id",
+        //                 "id"
+        //             ]
+        //         )->get();
+
+        //         $products = $products->orderBy('created_at', 'desc')->paginate(10);
+        //     } else {
+        //         $products = Product::with(['brand', 'category'])->select(
+        //             [
+        //                 'img',
+        //                 'price',
+        //                 'stock',
+        //                 'category_id',
+        //                 "name",
+        //                 "brand_id",
+        //                 "id"
+        //             ]
+        //         )->where('category_id', $request->
+        //         query('cid'))->get();
+
+        //         $products = $products->orderBy('created_at', 'desc')->paginate(10);
+        //     }
+
+        //     Cache::put('products' . $request->query('cid') . $request->
+        //     query('page'), $products, 120);
+        //     return response()->json([
+        //         'products' => $products,
+        //     ], 200);
+
+        // }
     }
 
     /**
@@ -106,7 +158,6 @@ class ProductController extends Controller
                     'brand_id' => $request->brand_id,
                     'stock' => $request->stock,
                     'fact_id' => $request->fact_id,
-
                     'origin_country' => $request->origin_country,
                     'discount' => $request->discount,
                     'size' => $request->size,
@@ -158,9 +209,67 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request , $id)
     {
-        //
+        try {
+            $product = Product::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
+
+
+
+
+        if ($request->imgChanged) {
+
+            $paths = [];
+
+            if ($request->hasFile('image')) {
+
+                $patho = Storage::disk('public')->put('imgs', $request->file('image'));
+
+                //  dd($request->file('image'));
+                foreach ($request->file('image') as $image) {
+                    dd($image);
+                    $patho = Storage::disk('public')->put('imgs', $image);
+                    array_push($paths, $patho);
+                    // Do something with the image path, like storing it in a database
+                }
+            }
+
+
+
+            $product->update([
+            'img' => json_encode($patho)
+            ]);
+        }
+
+
+        $product->update([
+            'name' => $request->name,
+            'brand_id' => $request->brand_id,
+            'stock' => $request->stock,
+            'fact_id' => $request->fact_id,
+            'origin_country' => $request->origin_country,
+            'discount' => $request->discount,
+            'size' => $request->size,
+            'expiration_date' => $request->expiration_date,
+            'price' => $request->price,
+            'category_id' => $request->category,
+            'description' => $request->description,
+        ]);
+
+
+        return response()->json([
+            'message' => "Product updated",
+            'data' => $product,
+
+
+        ], 200);
     }
 
     /**

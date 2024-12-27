@@ -18,6 +18,7 @@ class RecipeController extends Controller
             [
                 'img',
                 'name',
+                'id',
                 'serving',
                 'timeInMinutes',
 
