@@ -18,6 +18,7 @@ class RecipeController extends Controller
             [
                 'img',
                 'name',
+                'id',
                 'serving',
                 'timeInMinutes',
 
@@ -46,13 +47,15 @@ class RecipeController extends Controller
     {
 
 
-        $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+        //return response()->json(['message' => 'Recipe created successfully', 'recipe' => $request], 201);
+    //dd($request->file('img'));
+       // $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
         $recipe = new recipe();
         $recipe->name = $request->name;
         $recipe->description = $request->input('description');
         $recipe->serving = $request->input('serving');
-        $recipe->img = $patho;
+        $recipe->img = "";
         $recipe->product_id = $request->input('product_id');
         $recipe->timeInMinutes = $request->input('timeInMinutes');
         $recipe->insructions = $request->input('instructions');

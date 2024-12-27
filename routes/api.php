@@ -50,8 +50,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('brand/create', [BrandController::class, 'store']);
         Route::post('city/add', [CityController::class, 'store']);
         Route::post('order/paid/{id}', [OrderController::class, 'paid']);
+        Route::post('order/delivered/{id}', [OrderController::class, 'delivered']);
         Route::post('recipe/create', [RecipeController::class, 'store']);
         Route::post('products/add', [ProductController::class, 'store']);
+        Route::post('products/edit/{id}', [ProductController::class, 'update']);
+
     });
 
 

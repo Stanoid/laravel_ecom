@@ -72,6 +72,7 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
 
+        //dd($request);
 
 
         $orderItems = [];
@@ -214,6 +215,32 @@ class OrderController extends Controller
 
         return response()->json([
             'message' =>  "order paid",
+            'data' =>  $order,
+
+        ], 200);
+    }
+
+
+    public function delivered($id)
+    {
+
+
+
+
+        try {
+            $order = Order::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
+        $order->update(['status' => "delivered"]);
+
+
+        return response()->json([
+            'message' =>  "order delivered",
             'data' =>  $order,
 
         ], 200);

@@ -47,7 +47,6 @@ class DatabaseSeeder extends Seeder
          Brand::factory(3)->create([]);
          Fact::factory(40)->create();
 
-
     Product::factory(100)->create();
     city::factory(20)->create();
 
