@@ -72,6 +72,8 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
 
+
+
         $orderItems = [];
         $ordernum = uniqid();
         $user_id = Auth::user()->id;
@@ -79,12 +81,12 @@ class OrderController extends Controller
 
 
 
-        $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+       // $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
         $payment =   Payment::create([
             'fullname' => $request->fullName,
             'phone' => $request->paymentphone,
-            'img' => $patho,
+            'img' => "11111111111111",
         ]);
 
 
@@ -142,7 +144,7 @@ class OrderController extends Controller
 
         $Ord = Order::find($order->id);
 
-        $Ord->update(['total_price' => $total_price, 'status' => 'paid']);
+        $Ord->update(['total_price' => $total_price, 'status' => 'initiated']);
 
 
         return response()->json([

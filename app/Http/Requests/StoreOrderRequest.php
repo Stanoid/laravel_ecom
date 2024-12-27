@@ -26,7 +26,7 @@ class StoreOrderRequest extends FormRequest
             "address"=> "required|string",
             "phone"=> "required|string",
             "city_id"=> "required|integer|exists:cities,id",
-            'img'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'img'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }
