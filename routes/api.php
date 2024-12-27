@@ -22,6 +22,7 @@ Route::get('user/login', [UserController::class, 'index'])->name("login");
 Route::get('test', [ProductController::class, 'test']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/list', [CategoryController::class, 'list']);
 Route::get('product/{id}', [ProductController::class, 'show']);
 Route::post('recipes/create', action: [RecipeController::class, 'store']);
 Route::get('recipes', [RecipeController::class, 'index']);
@@ -52,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('order/paid/{id}', [OrderController::class, 'paid']);
         Route::post('order/delivered/{id}', [OrderController::class, 'delivered']);
         Route::post('recipe/create', [RecipeController::class, 'store']);
+        Route::post('recipe/update/{id}', [RecipeController::class, 'update']);
         Route::post('products/add', [ProductController::class, 'store']);
         Route::post('products/edit/{id}', [ProductController::class, 'update']);
 

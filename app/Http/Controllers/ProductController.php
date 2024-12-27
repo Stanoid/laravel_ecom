@@ -224,7 +224,7 @@ class ProductController extends Controller
 
 
 
-        if ($request->imgChanged) {
+        if (json_decode($request->imgChanged)) {
 
             $paths = [];
 

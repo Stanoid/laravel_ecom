@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\recipe;
 use App\Http\Requests\StorerecipeRequest;
 use App\Http\Requests\UpdaterecipeRequest;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 class RecipeController extends Controller
 {
@@ -88,9 +89,50 @@ class RecipeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdaterecipeRequest $request, recipe $recipe)
+    public function update(UpdaterecipeRequest $request, $id)
+
     {
-        //
+
+        $recipe = recipe::findOrFail($id);
+
+
+        if (json_decode($request->imgChanged)) {
+
+            $paths = [];
+
+            if ($request->hasFile('img')) {
+
+                $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+
+                //  dd($request->file('image'));
+
+            }
+
+
+
+            $recipe->update([
+            'img' => json_encode($patho)
+            ]);
+        }
+
+        $recipe->update([
+          'name'=> $recipe->name,
+            'description'=> $recipe->description,
+            'serving'=> $recipe->serving,
+            'img'=> $recipe->img,
+            'product_id'=> $recipe->product_id,
+            'timeInMinutes'=> $recipe->timeInMinutes     ,
+            'insructions'=> $recipe->instructions
+
+        ]);
+
+        return response()->json([
+            'message' => "Recipe updated",
+            'data' =>json_decode( $recipe),
+
+
+        ], 200);
+
     }
 
     /**
