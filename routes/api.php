@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('category/add', [CategoryController::class, 'store']);//
         Route::post('recipe/update/{id}', [RecipeController::class, 'update']);
         Route::post('products/add', [ProductController::class, 'store']);
-        Route::post('products/edit/{id}', [ProductController::class, 'update']);
+        Route::post('products/edit/{id}', [ProductController::class, 'update']);//
 
 
 
