@@ -26,7 +26,6 @@ class ProductController extends Controller
 
         if ($request->query('cid') == 0) {
 
-
             $products = Cache::remember('products'.$request->query('cid').$request->query('page')
 , 60, function () {
                 return    Product::with(['brand', 'category'])->select(
@@ -42,6 +41,8 @@ class ProductController extends Controller
                 )->orderBy('created_at','desc')->simplePaginate(10);
             });
         } else {
+
+           // dd($request->all());
             $products = Cache::remember('products'.$request->query('cid').$request->query('page')
 , 60, function () use ($request) {
                 return    Product::with(['brand', 'category'])->select(
