@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('order/delivered/{id}', [OrderController::class, 'delivered']);
         Route::post('order/deleted/{id}', [OrderController::class, 'destroy']); //
         Route::post('recipe/create', [RecipeController::class, 'store']);
+
         Route::post('category/add', [CategoryController::class, 'store']);//
         Route::post('recipe/update/{id}', [RecipeController::class, 'update']);
         Route::post('products/add', [ProductController::class, 'store']);
