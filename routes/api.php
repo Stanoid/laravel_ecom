@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware([admin::class])->group(function () {
 
         Route::get('orders/list', [OrderController::class, 'adminOrders']);
+        Route::get('orders/list/{id}', [OrderController::class, 'ordersPerUser']);
 
 
 

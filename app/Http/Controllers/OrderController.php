@@ -69,6 +69,19 @@ class OrderController extends Controller
         //
     }
 
+
+    public function ordersPerUser($id)
+    {
+        //dd($id);
+        $orders = Order::where('user_id', $id)->
+with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
+        ->orderBy('created_at', 'desc')->paginate(6);
+        //dd($orders);
+        return response()->json([
+            'data' => $orders,
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -85,12 +98,12 @@ class OrderController extends Controller
 
 
 
-      //  $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+        $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
         $payment =   Payment::create([
             'fullname' => $request->fullName,
             'phone' => $request->paymentphone,
-            'img' => "aaaaa",
+            'img' => $patho,
         ]);
 
 
