@@ -39,11 +39,11 @@ class ProductController extends Controller
                         "brand_id",
                         "id"
                     ]
-                )->simplePaginate(10);
+                )->orderBy('created_at','desc')->simplePaginate(10);
             });
         } else {
             $products = Cache::remember('products'.$request->query('cid').$request->query('page')
-, 60, function (Request $request) {
+, 60, function () use ($request) {
                 return    Product::with(['brand', 'category'])->select(
                 [
                     'img',
@@ -55,7 +55,7 @@ class ProductController extends Controller
                     "id"
                 ]
             )->where('category_id', $request->
-            query('cid'))->simplePaginate(10);
+            query('cid'))->orderBy('created_at','desc')->simplePaginate(10);
             });
         }
 
@@ -133,7 +133,8 @@ class ProductController extends Controller
         if ($request->validated()) {
 
 
-            // $patho = Storage::disk('public')->put('imgs', $request->file('image'));
+
+             $patho = Storage::disk('public')->put('imgs', $request->file('image'));
 
 
 
@@ -163,9 +164,10 @@ class ProductController extends Controller
                     'size' => $request->size,
                     'expiration_date' => $request->expiration_date,
                     'price' => $request->price,
+                    'fact_id'=>1,
                     'category_id' => $request->category,
                     'description' => $request->description,
-                    //'img' => json_encode($paths)
+                    'img' => json_encode($patho)
 
 
                 ]
