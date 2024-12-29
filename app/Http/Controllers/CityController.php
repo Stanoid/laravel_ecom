@@ -61,7 +61,7 @@ class CityController extends Controller
 
     public function paid($id)
     {
-        
+
     }
 
     /**
@@ -75,8 +75,10 @@ class CityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(city $city)
+    public function destroy( $id)
     {
-        //
+        $City = City::find($id);
+        $City->delete();
+        return response()->json(['message'=> 'City deleted'],200);
     }
 }

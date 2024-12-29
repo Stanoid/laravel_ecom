@@ -25,7 +25,7 @@ test('Register a new account', function () {
         'name'=> "test user registeration",
         'phone'=>'1111111',
         'address'=>'aaaaaaaa',
-        'email'=> "usee@gil.com",
+        'email'=> uniqid()."@ecom.com",
         'password'=>"test123",
     ]);
 
@@ -104,7 +104,7 @@ test(' admin Can add product', function () {
         'category'=>1,
         'brand_id'=>1,
         'description'=>"test",
-        'img'=> $file,
+        'image'=> $file,
 
 
 
@@ -124,6 +124,34 @@ test(' admin Can add product', function () {
 
 
 
+test(' admin Can add category', function () {
+    $user = User::factory()->create([
+        'role'=>'admin'
+    ]);
+
+
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->image('payment.jpg');
+
+    $response = $this->actingAs($user)->postJson('/api/category/add', [
+
+
+        'name'=>"test",
+        'img'=> $file,
+    ]);
+
+    $response->assertStatus(201)
+             ->assertJsonStructure([
+                 'data' => ['id', 'name','img'],
+             ]);
+
+            // Storage::disk('public')->assertExists($user->avatar);
+
+    $this->assertDatabaseHas('products', ['name' => 'test']);
+});
+
+
 
 
 
@@ -138,7 +166,7 @@ test('Can place order', function () {
     };
 
     $Item = new Item();
-    $Item->id = 1;
+    $Item->id = 3;
     $Item->qty = 1;
 
     $items = array($Item);
@@ -154,7 +182,6 @@ test('Can place order', function () {
         "cart"=> $items,
         "phone"=>"090909",
         "paymentphone"=> "090909090",
-        "status"=> "3|zLiu8uahCLsEWXtMMl05pfXAB2B8yOetNh5zrZhfd7e778e8",
         'fullName'=>"test full name",
         "address"=>"test adress",
 
@@ -187,4 +214,155 @@ test('admin can list orders', function () {
 
 
 
+
+
+test('gets categories', function () {
+    $response = $this->get('/api/categories');
+    $response->assertStatus(200)
+             ->assertJsonStructure([
+            'data' => [
+                'current_page',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'created_at',
+                        'updated_at',
+                        'name',
+                    ],
+                ],
+            ],
+        ]);
+
+    $this->assertDatabaseHas('users', ['name' => 'user']);
+});
+
+test('gets brands', function () {
+    $response = $this->get('/api/brand/list');
+    $response->assertStatus(200)
+             ->assertJsonStructure([
+            'data' => [
+
+
+                    '*' => [
+                        'id',
+                        'created_at',
+                        'updated_at',
+                        'name',
+                    ],
+
+            ],
+        ]);
+
+    $this->assertDatabaseHas('users', ['name' => 'user']);
+});
+
+
+test('gets product details', function () {
+    $response = $this->get('/api/product/1');
+    $response->assertStatus(200)
+             ->assertJsonStructure([
+            'data' => [
+
+
+
+                        'id',
+                        'created_at',
+                        'updated_at',
+                        'name',
+
+
+            ],
+        ]);
+
+    $this->assertDatabaseHas('users', ['name' => 'user']);
+});
+
+
+
+test('gets recipes', function () {
+    $response = $this->get('/api/recipes');
+    $response->assertStatus(200)
+             ->assertJsonStructure([
+                'recipes' => [
+
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'img',
+                            'serving',
+                            'timeInMinutes',
+                            'name',
+                        ],
+                    ],
+                ],
+        ]);
+
+
+
+
+
+    $this->assertDatabaseHas('users', ['name' => 'user']);
+});
+
+
+test('gets a recipe', function () {
+    $response = $this->get('/api/recipe/1');
+    $response->assertStatus(200)
+             ->assertJsonStructure([
+
+                    'data' => [
+
+                            'id',
+                            'img',
+                            'serving',
+                            'timeInMinutes',
+                            'name',
+
+                    ],
+
+        ]);
+
+
+
+
+
+    $this->assertDatabaseHas('users', ['name' => 'user']);
+});
+
+
+test(' admin Can add recipe', function () {
+    $user = User::factory()->create([
+        'role'=>'admin'
+    ]);
+
+
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->image('payment.jpg');
+
+
+    $response = $this->actingAs($user)->postJson('/api/recipes/create', [
+
+
+        'name'=>"test",
+        'description'=>"test",
+        'serving'=>23,
+        'product_id'=>1,
+        'timeInMinutes'=>122,
+        'instructions'=>'aas ddd ff ggg hhh ',
+        'img'=> $file,
+
+
+
+
+
+    ]);
+
+    $response->assertStatus(201);
+
+
+            // Storage::disk('public')->assertExists($user->avatar);
+
+    $this->assertDatabaseHas('recipes', ['name' => 'test']);
+});
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Storage;
 
 
 class CategoryController extends Controller
@@ -35,7 +36,20 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+
+
+        $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+
+        $category = Category::create([
+            'name' => $request->name,
+            'img'=> $patho
+        ]);
+
+        return response()->json([
+            'data'=> $category
+                    ],201);
+
+
     }
 
     /**
@@ -74,8 +88,15 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        //
+
+        $category = Category::find($id);
+        $category->delete();
+
+        return response()->json([
+            'message'=> 'Category deleted successfully'
+
+                    ],200);
     }
 }

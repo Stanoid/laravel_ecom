@@ -28,7 +28,7 @@ class ProductFactory extends Factory
             'expiration_date'=>fake()->date(),
             'description'=>fake()->paragraph(1),
             'img' => json_encode(fake()->imageUrl()),
-            'stock' => fake()->numberBetween(0,100),
+            'stock' => fake()->numberBetween(10,100),
             'price' => fake()->numberBetween(200, 1000),
 
 

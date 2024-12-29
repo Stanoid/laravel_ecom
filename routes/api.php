@@ -47,21 +47,40 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Admin role check
     Route::middleware([admin::class])->group(function () {
+
         Route::get('orders/list', [OrderController::class, 'adminOrders']);
+
+
+
         Route::post('brand/create', [BrandController::class, 'store']);
         Route::post('city/add', [CityController::class, 'store']);
         Route::post('order/paid/{id}', [OrderController::class, 'paid']);
         Route::post('order/delivered/{id}', [OrderController::class, 'delivered']);
+        Route::post('order/deleted/{id}', [OrderController::class, 'destroy']);
         Route::post('recipe/create', [RecipeController::class, 'store']);
+        Route::post('category/add', [CategoryController::class, 'store']);
         Route::post('recipe/update/{id}', [RecipeController::class, 'update']);
         Route::post('products/add', [ProductController::class, 'store']);
         Route::post('products/edit/{id}', [ProductController::class, 'update']);
+
+
+        //Route::post('product/delete/{id}', [ProductController::class, 'destroy']);
+        Route::post('order/deleted/{id}', [OrderController::class, 'destroy']);
+        Route::post('brand/delete/{id}', [BrandController::class, 'destroy']);
+        Route::post('recipe/delete/{id}', [RecipeController::class, 'destroy']);
+        Route::post('category/delete/{id}', [CategoryController::class, 'destroy']);
+        Route::post('city/delete/{id}', [CityController::class, 'destroy']);
+
+
+
 
     });
 
 
     //Route::resource('orders', OrderController::class);
     //Route::resource('products', ProductController::class);
+
+
 
     Route::post('order/place', [OrderController::class, 'store']);
     Route::get('order/list', [OrderController::class, 'index']);

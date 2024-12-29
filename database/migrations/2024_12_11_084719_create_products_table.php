@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->foreignId("category_id")->constrained();
-            $table->foreignId("brand_id")->constrained();
-            $table->foreignId("fact_id")->constrained();
+            $table->foreignId("category_id")->nullOnDelete();
+            $table->foreignId("brand_id")->nullOnDelete();
+            $table->foreignId("fact_id")->nullOnDelete();
             $table->text('name');
             $table->text('origin_country');
             $table->integer("discount");

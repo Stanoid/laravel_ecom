@@ -35,7 +35,10 @@ class OrderController extends Controller
     {
 
         if (Auth::user()->role == 'admin') {
-            $orders = Order::orderBy('created_at', 'desc')->with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])->paginate(10);
+            $orders = Order::orderBy('created_at', 'desc')->
+            with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
+            ->where('status', '!=', 'deleted')
+            ->paginate(10);
 
             return response()->json([
                 'data' => $orders,
@@ -82,12 +85,12 @@ class OrderController extends Controller
 
 
 
-       // $patho = Storage::disk('public')->put('imgs', $request->file('img'));
+      //  $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
         $payment =   Payment::create([
             'fullname' => $request->fullName,
             'phone' => $request->paymentphone,
-            'img' => "11111111111111",
+            'img' => "aaaaa",
         ]);
 
 
@@ -113,7 +116,7 @@ class OrderController extends Controller
                 return response()->json([
                     'message' => $product->name . "is out of stock",
                     "error_code" => "out_of_stock"
-                ], 200);
+                ], 404);
             } else {
 
 
@@ -121,9 +124,6 @@ class OrderController extends Controller
                 $price = $product->price;
                 $qty = $obj->qty;
                 $total_price += $price * $qty;
-
-
-
                 $orderitem = $order->items()->create(
                     [
                         'product_id' => $id,
@@ -257,8 +257,24 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy($id)
     {
-        //
+        try {
+            $order = Order::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
+        $order->update(['status' => "deleted"]);
+
+
+        return response()->json([
+            'message' =>  "order deleted",
+            'data' =>  $order,
+
+        ], 200);
     }
 }
