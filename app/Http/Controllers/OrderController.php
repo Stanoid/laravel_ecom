@@ -9,6 +9,8 @@ use App\Models\city;
 use App\Models\Payment;
 use App\Models\Product;
 use GuzzleHttp\Psr7\Request;
+
+use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +69,144 @@ class OrderController extends Controller
     public function create()
     {
         //
+    }
+
+
+    public function revenue()
+    {
+        //total revenue
+        //revenue per city
+        //revnue per category
+        //top selling products
+        //avrage order value total revenue over number of orders
+
+        $total_revenue = Order::where('status', 'paid')->sum('total_price');
+        $order_number = Order::where('status', 'paid')->count();
+
+        return response()->json([
+            'revenue' => $total_revenue,
+            'orders_number'=> $order_number
+
+        ], 200);
+
+
+
+    }
+
+    public function topSelling()
+    {
+
+        $orders = Order::where('status', 'paid')->select('id',"total_price") -> with('items.product')->get();
+
+        $categoryTotals = [];
+        foreach ($orders as $order) {
+            foreach ($order['items'] as $item) {
+              $categoryId = $item['product']['id'];
+
+              $price = $item['price'] * $item['qty'];
+
+              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+
+              $categoryTotals[$categoryId] += $price;
+            }
+          }
+
+          $new =[];
+          foreach ($categoryTotals as $key => $value) {
+          $category = Category::find($key)->name;
+           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
+          }
+
+
+        return response()->json([       'data' => $new,
+        ], 200);
+
+
+    }
+
+
+    public function revenuePerCategory()
+    {
+
+        $orders = Order::where('status', 'paid')->select('id',"total_price") -> with('items.product')->get();
+
+        $categoryTotals = [];
+        foreach ($orders as $order) {
+            foreach ($order['items'] as $item) {
+              $categoryId = $item['product']['category_id'];
+              $price = $order['total_price'];
+
+              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+
+              $categoryTotals[$categoryId] += $price;
+            }
+          }
+
+          $new =[];
+          foreach ($categoryTotals as $key => $value) {
+          $category = Category::find($key)->name;
+           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
+          }
+
+
+return response()->json([   'data' => $new,
+], 200);
+
+    }
+
+
+
+    public function revenuePerCity()
+    {
+
+        $orders = Order::where('status', 'paid')->select('id',"city_id","total_price") ->get();
+
+        $categoryTotals = [];
+        foreach ($orders as $order) {
+
+              $categoryId = $order['city_id'];
+              $price = $order['total_price'];
+
+              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+
+              $categoryTotals[$categoryId] += $price;
+
+          }
+
+          $new =[];
+          foreach ($categoryTotals as $key => $value) {
+          $category = city::find($key)->name;
+           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
+          }
+
+
+return response()->json([   'data' => $new,
+], 200);
+
+    }
+
+
+
+    public function totalRevenuPeriod($start, $end)
+    {
+
+   // return $start.$end;
+        //total revenue for a period
+
+           $orders = Order::where('status', 'paid')->whereBetween('created_at',
+            [$start, $end])->get();
+
+           $total_revenue =  $orders->sum('total_price');
+           $count = $orders->count();
+            return response()->json([
+                'revenue' => $total_revenue,
+                'orders_number'=> $count,
+                'start'=>$start,
+                'end'=>$end
+
+            ], 200);
+
+
     }
 
 

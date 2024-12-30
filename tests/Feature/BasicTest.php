@@ -178,7 +178,7 @@ test('Can place order', function () {
 
     $response = $this->actingAs($user)->postJson('/api/order/place', [
         'img'=> $file,
-        "city_id"=>1,
+        "city_id"=>3,
         "cart"=> $items,
         "phone"=>"090909",
         "paymentphone"=> "090909090",
