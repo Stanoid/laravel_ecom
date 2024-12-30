@@ -13,6 +13,7 @@ use App\Http\Controllers\RecipeController;
 
 
 
+
 //un_authed
 Route::post('user/register', [userController::class, 'store']);
 Route::post('user/login', [UserController::class, 'auth']);
