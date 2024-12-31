@@ -37,10 +37,10 @@ class OrderController extends Controller
     {
 
         if (Auth::user()->role == 'admin') {
-            $orders = Order::orderBy('created_at', 'desc')->
-            with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
-            ->where('status', '!=', 'deleted')
-            ->paginate(10);
+            $orders = Order::orderBy('created_at', 'desc')->with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
+                ->where('status', '!=', 'deleted')
+                ->orWhere('status', '!=', 'archived')
+                ->paginate(10);
 
             return response()->json([
                 'data' => $orders,
@@ -66,10 +66,31 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function archivedOrders()
     {
-        //
+
+
+        $orders = Order::with(['items', 'items.product', 'items.product.category', 'payment'])
+        ->where('status','=', 'archived')
+        ->orderBy('created_at', 'desc')->paginate(10);
+        return response()->json([
+            'data' => $orders,
+        ], 200);
     }
+
+
+    public function deletedOrders()
+    {
+
+
+        $orders = Order::with(['items', 'items.product', 'items.product.category', 'payment'])
+        ->where('status','=', 'deleted')
+        ->orderBy('created_at', 'desc')->paginate(10);
+        return response()->json([
+            'data' => $orders,
+        ], 200);
+    }
+
 
 
     public function revenue()
@@ -85,74 +106,76 @@ class OrderController extends Controller
 
         return response()->json([
             'revenue' => $total_revenue,
-            'orders_number'=> $order_number
+            'orders_number' => $order_number
 
         ], 200);
-
-
-
     }
 
     public function topSelling()
     {
 
-        $orders = Order::where('status', 'paid')->select('id',"total_price") -> with('items.product')->get();
+        $orders = Order::where('status', '=', 'paid')
+            ->orWhere('status', '=', 'delivered')
+            ->orWhere('status', '=', 'archived')
+
+            ->select('id', "total_price")->with('items.product')->get();
 
         $categoryTotals = [];
         foreach ($orders as $order) {
             foreach ($order['items'] as $item) {
-              $categoryId = $item['product']['id'];
+                $categoryId = $item['product']['id'];
 
-              $price = $item['price'] * $item['qty'];
+                $price = $item['price'] * $item['qty'];
 
-              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+                $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId]) ? $categoryTotals[$categoryId] : 0;
 
-              $categoryTotals[$categoryId] += $price;
+                $categoryTotals[$categoryId] += $price;
             }
-          }
+        }
 
-          $new =[];
-          foreach ($categoryTotals as $key => $value) {
-          $category = Category::find($key)->name;
-           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
-          }
+        $new = [];
+        foreach ($categoryTotals as $key => $value) {
+            $category = Product::find($key)->name;
+            array_push($new, ['id' => $key, 'name' => $category, 'revenue' => $value]);
+        }
 
 
-        return response()->json([       'data' => $new,
+        return response()->json([
+            'data' => $new,
         ], 200);
-
-
-
     }
 
 
     public function revenuePerCategory()
     {
 
-        $orders = Order::where('status', 'paid')->select('id',"total_price") -> with('items.product')->get();
+        $orders = Order::where('status', '=', 'paid')
+            ->orWhere('status', '=', 'delivered')
+            ->orWhere('status', '=', 'archived')
+            ->select('id', "total_price")->with('items.product')->get();
 
         $categoryTotals = [];
         foreach ($orders as $order) {
             foreach ($order['items'] as $item) {
-              $categoryId = $item['product']['category_id'];
-              $price = $order['total_price'];
+                $categoryId = $item['product']['category_id'];
+                $price = $order['total_price'];
 
-              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+                $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId]) ? $categoryTotals[$categoryId] : 0;
 
-              $categoryTotals[$categoryId] += $price;
+                $categoryTotals[$categoryId] += $price;
             }
-          }
+        }
 
-          $new =[];
-          foreach ($categoryTotals as $key => $value) {
-          $category = Category::find($key)->name;
-           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
-          }
+        $new = [];
+        foreach ($categoryTotals as $key => $value) {
+            $category = Category::find($key)->name;
+            array_push($new, ['id' => $key, 'name' => $category, 'revenue' => $value]);
+        }
 
 
-return response()->json([   'data' => $new,
-], 200);
-
+        return response()->json([
+            'data' => $new,
+        ], 200);
     }
 
 
@@ -160,30 +183,32 @@ return response()->json([   'data' => $new,
     public function revenuePerCity()
     {
 
-        $orders = Order::where('status', 'paid')->select('id',"city_id","total_price") ->get();
+        $orders = Order::where('status', '=', 'paid')
+            ->orWhere('status', '=', 'delivered')
+            ->orWhere('status', '=', 'archived')
+            ->select('id', "city_id", "total_price")->get();
 
         $categoryTotals = [];
         foreach ($orders as $order) {
 
-              $categoryId = $order['city_id'];
-              $price = $order['total_price'];
+            $categoryId = $order['city_id'];
+            $price = $order['total_price'];
 
-              $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId])?$categoryTotals[$categoryId] : 0;
+            $categoryTotals[$categoryId] = isset($categoryTotals[$categoryId]) ? $categoryTotals[$categoryId] : 0;
 
-              $categoryTotals[$categoryId] += $price;
+            $categoryTotals[$categoryId] += $price;
+        }
 
-          }
-
-          $new =[];
-          foreach ($categoryTotals as $key => $value) {
-          $category = city::find($key)->name;
-           array_push($new, ['id'=>$key,'name'=>$category, 'revenue'=>$value]);
-          }
+        $new = [];
+        foreach ($categoryTotals as $key => $value) {
+            $category = city::find($key)->name;
+            array_push($new, ['id' => $key, 'name' => $category, 'revenue' => $value]);
+        }
 
 
-return response()->json([   'data' => $new,
-], 200);
-
+        return response()->json([
+            'data' => $new,
+        ], 200);
     }
 
 
@@ -191,32 +216,35 @@ return response()->json([   'data' => $new,
     public function totalRevenuPeriod($start, $end)
     {
 
-   // return $start.$end;
+        // return $start.$end;
         //total revenue for a period
 
-           $orders = Order::where('status', 'paid')->whereBetween('created_at',
-            [$start, $end])->get();
+        $orders = Order::where('status', '=', 'paid')
+            ->orWhere('status', '=', 'delivered')
+            ->orWhere('status', '=', 'archived')
 
-           $total_revenue =  $orders->sum('total_price');
-           $count = $orders->count();
-            return response()->json([
-                'revenue' => $total_revenue,
-                'orders_number'=> $count,
-                'start'=>$start,
-                'end'=>$end
+            ->whereBetween(
+                'created_at',
+                [$start, $end]
+            )->get();
 
-            ], 200);
+        $total_revenue =  $orders->sum('total_price');
+        $count = $orders->count();
+        return response()->json([
+            'revenue' => $total_revenue,
+            'orders_number' => $count,
+            'start' => $start,
+            'end' => $end
 
-
+        ], 200);
     }
 
 
     public function ordersPerUser($id)
     {
         //dd($id);
-        $orders = Order::where('user_id', $id)->
-with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
-        ->orderBy('created_at', 'desc')->paginate(6);
+        $orders = Order::where('user_id', $id)->with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.category'])
+            ->orderBy('created_at', 'desc')->paginate(6);
         //dd($orders);
         return response()->json([
             'data' => $orders,
@@ -378,9 +406,6 @@ with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.catego
     public function delivered($id)
     {
 
-
-
-
         try {
             $order = Order::findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -399,6 +424,9 @@ with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.catego
 
         ], 200);
     }
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -422,13 +450,62 @@ with(['user', 'city', 'items', 'items.product', 'payment', 'items.product.catego
             ], 404);
         }
 
-        $order->update(['status' => "deleted"]);
+        if ($order->status == "initiated") {
+            $order->update(['status' => "deleted"]);
+            return response()->json([
+                'message' =>  "order deleted",
+                'data' =>  $order,
+
+            ], 200);
+        } else {
+            return response()->json([
+                'message' =>  "Cant delete completed orders, use archive instead",
+                'data' =>  $order,
+
+            ], 403);
+
+        }
 
 
-        return response()->json([
-            'message' =>  "order deleted",
-            'data' =>  $order,
-
-        ], 200);
     }
+
+    public function archive($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json([
+                'error' =>  $e->getMessage(),
+            ], 404);
+        }
+
+        if ($order->status == "initiated") {
+
+            return response()->json([
+                'message' =>  "Cant archive incompleted orders, use delete instead",
+                'data' =>  $order,
+
+            ], 403);
+
+
+        } else {
+            //$order->update(['status' => "archived"]);
+            $order->update(['status' => "archived"]);
+            return response()->json([
+                'message' =>  "order archived",
+                'data' =>  $order,
+
+            ], 200);
+
+
+        }
+
+
+    }
+
+
+
+
+
 }

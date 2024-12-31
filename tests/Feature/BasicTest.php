@@ -166,7 +166,7 @@ test('Can place order', function () {
     };
 
     $Item = new Item();
-    $Item->id = 3;
+    $Item->id = 5;
     $Item->qty = 1;
 
     $items = array($Item);

@@ -56,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('orders/list', [OrderController::class, 'adminOrders']);
         Route::get('orders/list/{id}', [OrderController::class, 'ordersPerUser']);//
+        Route::get('orders/archived', [OrderController::class, 'archivedOrders']);//
+        Route::get('orders/deleted', [OrderController::class, 'deletedOrders']);//
+
 
         Route::get('orders/date/{start}/{end}', [OrderController::class, 'totalRevenuPeriod']);//
         Route::get('orders/revenuePerCategory', [OrderController::class, 'revenuePerCategory']);//
@@ -81,6 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         //Route::post('product/delete/{id}', [ProductController::class, 'destroy']);
         Route::post('order/deleted/{id}', [OrderController::class, 'destroy']);
+        Route::post('order/archived/{id}', [OrderController::class, 'archive']);
+
         Route::post('brand/delete/{id}', [BrandController::class, 'destroy']);
         Route::post('recipe/delete/{id}', [RecipeController::class, 'destroy']);
         Route::post('category/delete/{id}', [CategoryController::class, 'destroy']);
