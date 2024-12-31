@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
+use App\Models\recipe;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Container\Attributes\Auth;
@@ -204,10 +205,10 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
-    {
-        //
-    }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -304,5 +305,21 @@ class ProductController extends Controller
 
 
         return $products;
+    }
+
+
+    public function search ($keyword)
+    {
+        $products = Product::limit(10)->select(
+            [
+                'img',
+                "name",
+                "id"
+            ]
+        )->where('name', 'like', '%' . $keyword . '%')->get();
+
+        return response()->json([
+            'products' => $products,
+        ], 200);
     }
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\RecipeController;
-
+use App\Models\Product;
 
 
 
@@ -34,6 +34,8 @@ Route::get('recipe/{id}', [RecipeController::class, 'show']);
 Route::get('brand/list', [BrandController::class, 'index']);
 Route::get('city/list', [CityController::class, 'index']);
 Route::get('city/{id}', [CityController::class, 'show']);//
+Route::get('search/{keyword}', [ProductController::class, 'search']);//
+
 
 
 
