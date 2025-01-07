@@ -341,7 +341,7 @@ test(' admin Can add recipe', function () {
     $file = UploadedFile::fake()->image('payment.jpg');
 
 
-    $response = $this->actingAs($user)->postJson('/api/recipes/create', [
+    $response = $this->actingAs($user)->postJson('/api/recipe/create', [
 
 
         'name'=>"test",

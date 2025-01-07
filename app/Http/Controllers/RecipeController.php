@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\recipe;
+use App\Models\Recipe;
 use App\Http\Requests\StorerecipeRequest;
 use App\Http\Requests\UpdaterecipeRequest;
 use Illuminate\Support\Facades\Request;
@@ -15,7 +15,7 @@ class RecipeController extends Controller
     public function index()
     {
 
-        $recipes = recipe::select(
+        $recipes = Recipe::select(
             [
                 'img',
                 'name',
@@ -52,7 +52,7 @@ class RecipeController extends Controller
     //dd($request->file('img'));
         $patho = Storage::disk('public')->put('imgs', $request->file('img'));
 
-        $recipe = new recipe();
+        $recipe = new Recipe();
         $recipe->name = $request->name;
         $recipe->description = $request->input('description');
         $recipe->serving = $request->input('serving');
@@ -70,7 +70,7 @@ class RecipeController extends Controller
      */
     public function show($id)
     {
-        $recipe = recipe::with('product')->findOrFail($id);
+        $recipe = Recipe::with('product')->findOrFail($id);
 
         return response()->json([
             'data' => $recipe,
@@ -81,7 +81,7 @@ class RecipeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(recipe $recipe)
+    public function edit(Recipe $recipe)
     {
         //
     }
@@ -93,7 +93,7 @@ class RecipeController extends Controller
 
     {
 
-        $recipe = recipe::findOrFail($id);
+        $recipe = Recipe::findOrFail($id);
 
 
         if (json_decode($request->imgChanged)) {
@@ -140,7 +140,7 @@ class RecipeController extends Controller
      */
     public function destroy($id)
     {
-        $recipe = recipe::findOrFail($id);
+        $recipe = Recipe::findOrFail($id);
         $recipe->delete();
         return response()->json([
             'message'=> 'Recipe deleted successfully',

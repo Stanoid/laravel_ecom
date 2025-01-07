@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\TelegramController;
 use App\Models\Product;
 
 
@@ -25,18 +26,19 @@ Route::get('user/login', [UserController::class, 'index'])->name("login");
 Route::get('test', [ProductController::class, 'test']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('categories', [CategoryController::class, 'index']);
-Route::get('category/{id}', [CategoryController::class, 'show']);//
+Route::get('category/{id}', [CategoryController::class, 'show']); //
 Route::get('categories/list', [CategoryController::class, 'list']);
 Route::get('product/{id}', [ProductController::class, 'show']);
-Route::post('recipes/create', action: [RecipeController::class, 'store']);
 Route::get('recipes', [RecipeController::class, 'index']);
 Route::get('recipe/{id}', [RecipeController::class, 'show']);
 Route::get('brand/list', [BrandController::class, 'index']);
 Route::get('city/list', [CityController::class, 'index']);
-Route::get('city/{id}', [CityController::class, 'show']);//
-Route::get('search/{keyword}', [ProductController::class, 'search']);//
-
-
+Route::get('city/{id}', [CityController::class, 'show']); //
+Route::get('search/{keyword}', [ProductController::class, 'search']); //
+Route::get('telegram/{mes}', [OrderController::class, 'telegram']); //
+Route::get('setweb/{wh}', [OrderController::class, 'webh']); //
+Route::post('8190318819:AAHakYcO1xkRvofKbxSQxvtGWp4DD-NsuXU/webhook', [OrderController::class, 'incomming']); //
+Route::get('commands', [OrderController::class, 'commands']); //
 
 
 //Route::resource('products', ProductController::class);
@@ -57,16 +59,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware([admin::class])->group(function () {
 
         Route::get('orders/list', [OrderController::class, 'adminOrders']);
-        Route::get('orders/list/{id}', [OrderController::class, 'ordersPerUser']);//
-        Route::get('orders/archived', [OrderController::class, 'archivedOrders']);//
-        Route::get('orders/deleted', [OrderController::class, 'deletedOrders']);//
+        Route::get('orders/list/{id}', [OrderController::class, 'ordersPerUser']); //
+        Route::get('orders/archived', [OrderController::class, 'archivedOrders']); //
+        Route::get('orders/deleted', [OrderController::class, 'deletedOrders']); //
 
 
-        Route::get('orders/date/{start}/{end}', [OrderController::class, 'totalRevenuPeriod']);//
-        Route::get('orders/revenuePerCategory', [OrderController::class, 'revenuePerCategory']);//
-        Route::get('orders/revenuePerCity', [OrderController::class, 'revenuePerCity']);//
-        Route::get('orders/revenue', [OrderController::class, 'revenue']);//
-        Route::get('orders/topSelling', [OrderController::class, 'topSelling']);//
+        Route::get('orders/date/{start}/{end}', [OrderController::class, 'totalRevenuPeriod']); //
+        Route::get('orders/revenuePerCategory', [OrderController::class, 'revenuePerCategory']); //
+        Route::get('orders/revenuePerCity', [OrderController::class, 'revenuePerCity']); //
+        Route::get('orders/revenue', [OrderController::class, 'revenue']); //
+        Route::get('orders/topSelling', [OrderController::class, 'topSelling']); //
 
 
 
@@ -92,11 +94,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('recipe/delete/{id}', [RecipeController::class, 'destroy']);
         Route::post('category/delete/{id}', [CategoryController::class, 'destroy']);
         Route::post('city/delete/{id}', [CityController::class, 'destroy']);
-
-
-
-
-
     });
 
 
